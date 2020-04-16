@@ -1,7 +1,8 @@
-fn main() {
-    let mut s1 = String::from("hello");
-    let mut s2 = s1.clone();
 
-    s1="world".to
-    println!("{} {}",s1,s2);
+fn main(){
+    let reference_to_nothing=dangle();
+}
+fn dangle()->&String{
+    let s=String::from("hello");
+    &s
 }

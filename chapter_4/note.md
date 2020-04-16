@@ -154,6 +154,83 @@ fn takes_and_gives_back(a_string: String) -> String {
     a_string // a_string が呼び出し元にムーブする。
 }
 ```
-
+## 4-2. 参照と借用
 ### 参照と借用
-ここから！
+関数に渡す、すなわちムーブすると String が使えなくなってしまうため、関数に String への参照をさせる形にする。
+```rust
+fn main(){
+    let s1=String::from("hello");
+    let len=calculate_length(&s1);
+    println!("{}'s length is {}",s1,len);
+}
+fn calculate_length(s: &String)->usize{
+    s.len()
+}
+```
+& 演算子をつけることによって、関数は s1 を **参照** しているだけなので、String 型の s1 を引数に渡した後も s1 が使える。関数の引数に参照をとることを **借用** という。
+
+それでは借用した変数に変更を加えてみる。
+```rust
+fn main() {
+    let s = String::from("hello");
+    change(&s);
+}
+fn change(some_string: &String) {
+    some_string.push_str(", world");
+}
+```
+このコードは動かない。
+変数が標準で不変なのと同様で、参照も不変であある。
+
+### 可変な参照
+
+参照を mutableにすれば良い。
+```rust
+fn main() {
+    let mut s = String::from("hello");
+    change(&mut s);
+}
+fn change(some_string: &mut String) {
+    some_string.push_str(", world");
+}
+```
+
+また、参照には「ある特定のデータについて、1つしか可変の参照をもてない」という制約が存在する。
+```rust
+let mut s = String::from("hello");
+let r1 = &mut s;
+let r2 = &mut s;
+println!("{}",r1);
+```
+これはエラーが発生する。
+
+この制約があるとデータの競合を防ぐことができる。データの競合は次の3つの振る舞いが起きるときに発生する。
+* 2つ以上のポインタが同じデータに同時アクセスする
+* 少なくとも1つのポインタがデータに書き込みを行っている
+* データへのアクセスを同期する機構が使用されていない
+
+また、不変参照は複数回参照してもかまわないが、かといって可変参照と不変参照を組み合わせることはできない。
+```rust
+let mut s = String::from("hello");
+
+let r1 = &s; // 問題なし
+let r2 = &s; // 問題なし
+let r3 = &mut s; // 大問題！
+```
+
+### 宙に浮いた参照
+* ダングリングポインタ
+    
+    他人に渡されてしまった可能性のあるメモリを指すポインタのこと。その箇所へのポインタを保持している間に、メモリを開放してしまうことで発生する。
+
+Rust ではダングリングポインタを防ぐ。
+```rust
+fn main(){
+    let reference_to_nothing=dangle();
+}
+fn dangle()->&String{
+    let s=String::from("hello");
+    &s
+}// s はスコープを抜けて drop される。sのメモリは開放される。
+```
+ここでは、s への参照を dangle() が返しているが、s の寿命は定かではないのでコンパイル時にエラーが発生する。
