@@ -234,3 +234,85 @@ fn dangle()->&String{
 }// s はスコープを抜けて drop される。sのメモリは開放される。
 ```
 ここでは、s への参照を dangle() が返しているが、s の寿命は定かではないのでコンパイル時にエラーが発生する。
+
+### スライス型
+* スライス
+所有権のない別のデータ型のこと。スライスによって、コレクション内の一連の要素を参照することができる。
+
+```rust
+fn first_word(s:&String)->usize{
+    let bytes = s.as_bytes(); 
+    for(i, &item) in bytes.iter().enumerate() {
+        if item==b' '{
+            return i;
+        }
+    }
+    s.len()
+}
+```
+* as_bytes()
+    String をバイト配列に変換する
+
+* iter()
+    イテレータを生成する。イテレータってなんだよ！！！！
+
+* enumerate()
+    タプル(添え字, 要素への参照)を返す。
+
+* バイトリテラル表記
+    b'文字'
+
+このコード空白までの単語の長さを返すものとなっているが、usize は String 型の文字列の長さを表すため、String が drop されたあとは有効である保証がない。
+
+### 文字列スライス
+```rust
+let s = String::from("hello world");
+let hello = &s[0..5];
+let world = &s[6..11];
+```
+&String型の変数[starting_index..ending_index] と指定することでスライスを生成することができる。
+
+また、最初の index から始めたいときは、.. の前に値を書かなければいい。[0..2] と [..2] は等価である。
+
+同様に、最後の index まで含みたいときは、.. の後に値を書かなければいい。[2..len] と [2..] は等価である。 
+
+さらに、文字列全体のスライスを得るときは .. の前後に値を書かなければいい。[0..len] と [..] は等価である。
+
+では、先ほど usize で返していたものを、スライスで返すようにしてみる。
+```rust
+fn first_word(s:&String)->&str{
+    let bytes = s.as_bytes(); 
+    for(i, &item) in bytes.iter().enumerate() {
+        if item==b' '{
+            return &s[..i];
+        }
+    }
+    &s[..]
+}
+```
+
+こうすることで、元のデータ s に紐づけられた単独の値を得ることができる。
+
+また、この後に s を clear しようとするとエラーが発生する。
+```rust
+fn main() {
+    let mut s = String::from("hello world");
+    let word = first_word(&s);
+    s.clear(); // error!    (エラー！)
+    println!("{}",word);
+}
+```
+s は first_word(&s) で不変として借用されているため、mutable として宣言されていても後から clear することはできない。不変借用がスコープ内で発生したら、そのスコープが終わるまでその借用された変数は不変借用としてでなければ仕様ができない。具体的には、s の参照をスライスとして word に与えているため、wordが生きている以上 s を clear することはできない。
+
+## 文字列リテラルはスライスだった
+```rust
+let s = "Hello, world!";
+```
+ここでの s の型は &str だった。つまりスライス
+
+## 他のスライス
+```rust
+let a = [1,2,3,4,5];
+let slice = &[1..3];
+```
+このスライスは &[i32] という型になる。
