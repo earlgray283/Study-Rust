@@ -1,6 +1,3 @@
-mod client;
-mod network;
-
 #[cfg(test)]
 mod tests {
     #[test]
