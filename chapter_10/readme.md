@@ -307,3 +307,28 @@ impl<T: Display + PartialOrd> Pair<T> {
 }
 ```
 T が Display トレイトと PartialOrd トレイトを実装しているときにcmp_display メソッドは実装される。
+
+### (自分用)トレイトの何が嬉しいの？？？
+トレイトを使うことによって何が嬉しいのかというのは長年の悩みであったが、ながたかなさんに教えてもらってついに完全に理解することができた(?)。
+```rust
+trait Diameter {
+    fn diameter(&self) -> f64;
+    fn radius(&self) -> f64 {
+        self.diameter() / 2_f64
+    }
+}
+struct Circle { d: f64 }
+struct Square { x: f64 }
+
+impl Diameter for Circle {
+    fn diameter(&self) -> f64 { self.d }
+}
+impl Diameter for Square {
+    fn diameter(&self) -> f64 { self.x }
+}
+fn main(){
+    println!("{}", Circle{ d: 20_f64 }.radius());
+    println!("{}", Square{ x: 50_f64 }.radius());
+}
+```
+これは半径と直径の長さを求めるものである。パッと見だと「struct でよくない？笑」となるが、注目すべきは radius である。Circle と Square には radius メソッドがないはずだが、main 関数ではメソッドを呼び出せている。これは、trait でデフォルト radius が実装されているためである。これにより、いちいち構造体を定義するたびに radius を実装しなくてもよくなる。ただ、デフォルト定義関数がないとなると本当にメリットあるのか？？？

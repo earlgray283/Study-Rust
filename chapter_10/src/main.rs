@@ -1,23 +1,15 @@
-fn largest<T:PartialOrd+Copy>(list: &[T]) -> T {
-    let mut largest = list[0];
-
-    for &item in list.iter() {
-        if item > largest {
-            largest = item;
-        }
-    }
-
-    largest
+trait output{
+    fn echo();
 }
-
-fn main() {
-    let number_list = vec![34, 50, 25, 100, 65];
-
-    let result = largest(&number_list);
-    println!("The largest number is {}", result);
-
-    let char_list = vec!['y', 'm', 'a', 'q'];
-
-    let result = largest(&char_list);
-    println!("The largest char is {}", result);
+struct data{
+    x:i32,
+}
+impl data{
+    fn echo2(&self){
+        println!("hello~");
+    }
+}
+fn main(){
+    let a=data{x:1};
+    a.echo2();
 }
