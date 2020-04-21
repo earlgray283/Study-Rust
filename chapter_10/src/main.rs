@@ -1,15 +1,7 @@
-trait output{
-    fn echo();
-}
-struct data{
-    x:i32,
-}
-impl data{
-    fn echo2(&self){
-        println!("hello~");
-    }
+fn first_word(s: &str) -> &str {
+    "so cute"
 }
 fn main(){
-    let a=data{x:1};
-    a.echo2();
+    let res = first_word("makabe mizuki");
+    println!("{}",res);
 }
