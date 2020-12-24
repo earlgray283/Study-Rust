@@ -5,7 +5,7 @@ fn main() {
 
     s.clear(); // error!    (エラー！)
 
-    println!("{}",s);
+    println!("{}", s);
 }
 
 fn first_word(s: &String) -> &str {
