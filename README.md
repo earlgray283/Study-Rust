@@ -1,6 +1,6 @@
 # 自分用 The Book
 ## これはなに
-　The Book の説明だけじゃわからなかった部分を自分なりにまとめたやつです。といっても、The Book をそのまま写経してあるものもあるのであしからず。
+　The Book のまとめとか、Rust でわからなかったことなど備忘録とかです。
 
 ## 目次
 2. [数当てゲーム](https://github.com/earlgray283/Study-Rust/tree/master/guessing_game)
